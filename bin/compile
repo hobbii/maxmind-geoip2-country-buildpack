@@ -22,6 +22,7 @@ export_env_dir $ENV_DIR
 
 if [ -z ${MAXMIND_GEOIP2_LICENSE_KEY+x} ] || [ -z ${MAXMIND_GEOIP2_DB_PATH+x} ]; then
   echo "Missing required ENV settings MAXMIND_GEOIP2_LICENSE_KEY or MAXMIND_GEOIP2_DB_PATH"
+  exit 0;
 fi
 
 if [ ! -d $CACHE_DIR ]; then

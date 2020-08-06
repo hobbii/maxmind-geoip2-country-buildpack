@@ -4,10 +4,10 @@
 maxmindExists=$(grep -c '@maxmind/geoip2-node' $1/package.json)
 
 if [ -f $1/package.json ] && [ $maxmindExists == 1 ]; then
-  echo "@maxmind/geoip2-node detected will continue"
+  echo "@maxmind/geoip2-node in package.json"
   exit 0
 fi
 
-echo "@maxmind/geoip2-node not detected will exit"
+echo "@maxmind/geoip2-node not in package.json"
 
 exit 1
