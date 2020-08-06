@@ -33,7 +33,7 @@ DB_DOWNLOAD_PATH=$CACHE_DIR/db.tar.gz
 
 echo "Downloading DB..."
 
-wget $MAXMIND_GEOIP2_DB_URL$MAXMIND_GEOIP2_LICENSE_KEY -O $DB_DOWNLOAD_PATH
+wget -q $MAXMIND_GEOIP2_DB_URL$MAXMIND_GEOIP2_LICENSE_KEY -O $DB_DOWNLOAD_PATH
 
 if [ $? -gt 0 ]; then
   echo "Failed to download DB please check MAXMIND_GEOIP2_LICENSE_KEY config, stopping install"
