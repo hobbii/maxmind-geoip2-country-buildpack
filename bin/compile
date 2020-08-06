@@ -1,0 +1,63 @@
+#!/usr/bin/env bash
+# bin/detect <build-dir> <cache-dir> <env-dir>
+
+MAXMIND_GEOIP2_DB_URL="https://download.maxmind.com/app/geoip_download?edition_id=GeoIP2-Country&suffix=tar.gz&license_key="
+
+BUILD_DIR=$1
+CACHE_DIR=$2
+ENV_DIR=$3
+
+export_env_dir() {
+  env_dir=$1
+  acceptlist_regex=${2:-'^(MAXMIND_GEOIP2_LICENSE_KEY|MAXMIND_GEOIP2_DB_PATH)$'}
+  denylist_regex=${3:-'^(PATH|GIT_DIR|CPATH|CPPATH|LD_PRELOAD|LIBRARY_PATH)$'}
+  if [ -d "$env_dir" ]; then
+    for e in $(ls $env_dir); do
+      echo "$e" | grep -E "$acceptlist_regex" | grep -qvE "$denylist_regex" && export "$e=$(cat $env_dir/$e)"
+    done
+  fi
+}
+
+export_env_dir $ENV_DIR
+
+if [ -z ${MAXMIND_GEOIP2_LICENSE_KEY+x} ] || [ -z ${MAXMIND_GEOIP2_DB_PATH+x} ]; then
+  echo "Missing required ENV settings MAXMIND_GEOIP2_LICENSE_KEY or MAXMIND_GEOIP2_DB_PATH"
+fi
+
+if [ ! -d $CACHE_DIR ]; then
+  mkdir -p $CACHE_DIR
+fi
+
+DB_DOWNLOAD_PATH=$CACHE_DIR/db.tar.gz
+
+echo "Downloading DB..."
+
+wget -q $MAXMIND_GEOIP2_DB_URL$MAXMIND_GEOIP2_LICENSE_KEY -O $DB_DOWNLOAD_PATH
+
+if [ $? -gt 0 ]; then
+  echo "Failed to download DB please check MAXMIND_GEOIP2_LICENSE_KEY config, stopping install"
+  exit 0;
+fi
+
+echo "Download done"
+
+echo "Extracting..."
+
+tar -C $CACHE_DIR -zxf $DB_DOWNLOAD_PATH GeoIP2-Country_*/GeoIP2-Country.mmdb
+
+mkdir -p $BUILD_DIR/$MAXMIND_GEOIP2_DB_PATH
+
+echo "Extracing done"
+
+DB_VERSION=$(ls $CACHE_DIR | grep GeoIP2-Country_*)
+
+echo "Installing version: ${DB_VERSION}"
+
+mv $CACHE_DIR/GeoIP2-Country_*/GeoIP2-Country.mmdb $BUILD_DIR/$MAXMIND_GEOIP2_DB_PATH
+
+echo "Cleaning..."
+
+rm -r $CACHE_DIR/GeoIP2-Country_*
+rm $DB_DOWNLOAD_PATH
+
+echo "DB successfully updated"

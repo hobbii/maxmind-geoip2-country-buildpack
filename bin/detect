@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# bin/detect <build-dir>
+
+maxmindExists=$(grep -c '@maxmind/geoip2-node' $1/package.json)
+
+if [ -f $1/package.json ] && [ $maxmindExists == 1 ]; then
+  echo "@maxmind/geoip2-node detected will continue"
+  exit 0
+fi
+
+echo "@maxmind/geoip2-node not detected will exit"
+
+exit 1
