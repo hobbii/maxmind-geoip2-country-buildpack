@@ -1,0 +1,8 @@
+[buildpack]
+name = "Maxmind GeoIP2 Country database"
+
+  [publish.Ignore]
+  files = [
+    ".gitignore",
+    "README.md",
+]
