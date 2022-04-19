@@ -48,7 +48,7 @@ tar -C $CACHE_DIR -zxf $DB_DOWNLOAD_PATH --wildcards GeoIP2-Country_*/GeoIP2-Cou
 
 mkdir -p $BUILD_DIR/$MAXMIND_GEOIP2_DB_PATH
 
-echo "Extracing done"
+echo "Extraction done"
 
 DB_VERSION=$(ls $CACHE_DIR | grep GeoIP2-Country_*)
 
